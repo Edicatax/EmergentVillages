@@ -1,0 +1,8 @@
+Write code to do the following:
+Grab current regional difficulty;  see net.minecraft.world.DifficultyInstance.class
+If it is above some level, add villagers to the spawn list; see:
+Biome$SpawnList
+net.minecraft.world.biome.Biome.class (spawnableMonsterList || spawnableCreatureList)
+
+Figure out how canCreatureTypeSpawnHere works in net.minecraft.world.WorldServer.class
+
