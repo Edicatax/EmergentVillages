@@ -31,11 +31,11 @@ public class TickHandler {
 
 	@SubscribeEvent(priority=EventPriority.NORMAL)
 	public static void chunkWatched(Watch event){
-		FMLLog.getLogger().info("[EMVI]  Chunk unwatched at coords %d, %d", event.getChunk().chunkXPos, event.getChunk().chunkZPos);
+		FMLLog.getLogger().info("[EMVI]  Chunk watched at coords %i, %i", event.getChunk().chunkXPos, event.getChunk().chunkZPos);
 	}
 	
 	@SubscribeEvent(priority=EventPriority.NORMAL)
 	public static void chunkUnwatched(UnWatch event){
-		FMLLog.getLogger().info("[EMVI]  Chunk unwatched at coords %d, %d", event.getChunk().chunkXPos, event.getChunk().chunkZPos);
+		FMLLog.getLogger().info("[EMVI]  Chunk unwatched at coords %i, %i", event.getChunk().chunkXPos, event.getChunk().chunkZPos);
 	}
 }
