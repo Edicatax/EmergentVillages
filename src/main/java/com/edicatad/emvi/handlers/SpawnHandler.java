@@ -3,29 +3,18 @@ package com.edicatad.emvi.handlers;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.init.Biomes;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 @Mod.EventBusSubscriber
-public class TickHandler {
+public class SpawnHandler {
 	private static long worldTime;
-	public static void test(){
-		/*
-		 * I'm not sure this achieves what I want;  it adds the villager to the spawn list in some fashion
-		 * but I'm not sure when these are actually spawned, nor do I have any control over their proximity 
-		 * to the player.  I suspect a custom spawn handler may be the way to go here
-		 */
-		EntityRegistry.addSpawn(EntityVillager.class, 10, 0, 10, EnumCreatureType.CREATURE, Biomes.DEFAULT);
-	}
 	
 	@SubscribeEvent
 	public static void worldTick(WorldTickEvent event){
-		worldTime = event.world.getWorldTime();
+		// The world time ticks up indefinitely so we mod it to get the time within a day
+		worldTime = Math.floorMod(event.world.getWorldTime(),24000);
 		if(Math.floorMod(worldTime, 100)!=0){
 			return;
 		}
@@ -38,13 +27,14 @@ public class TickHandler {
 			 * TODO 
 			 * use getWorldTime to only run spawn checker code at dawn or something
 			 * spawn villagers based on random chance
+			 * limit villagers spawned on a per-chunk basis
+			 * maintain the limit in the world save file
 			 */
 			// this is a switch in case I want to provide mod support to other mods or add villagers to the nether or something
 			switch(event.world.provider.getDimension()){
 			case 0:
 				// We're ticking the overworld dimension!
 				// using a bed sticks you at a multiple of 24000
-				worldTime = event.world.getWorldTime();
 				if(Math.floorMod(worldTime, 10)==0){
 					Logger.getLogger("EMVI").log(Level.INFO,String.format("TESTING %d", worldTime));
 				}
