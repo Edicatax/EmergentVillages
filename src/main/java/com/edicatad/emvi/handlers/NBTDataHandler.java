@@ -1,5 +1,8 @@
 package com.edicatad.emvi.handlers;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
 import com.edicatad.emvi.world.storage.VillagerData;
 
 import net.minecraft.world.World;
@@ -32,6 +35,8 @@ public class NBTDataHandler {
 	public static void decrementVillagersSpawnedForChunk(int chunkX, int chunkZ){
 		if(getVillagersSpawnedForChunk(chunkX, chunkZ) > 0){
 			villagerData.getData().setInteger(String.format("x%iz%i", chunkX, chunkZ), getVillagersSpawnedForChunk(chunkX, chunkZ) - 1);
+		} else {
+			LogManager.getLogger().log(Level.WARN, String.format("Tried to decrement villager spawn count for chunk at x%iz%i below 0", chunkX, chunkZ));
 		}
 	}
 }
