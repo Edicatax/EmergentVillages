@@ -1,8 +1,5 @@
 package com.edicatad.emvi.handlers;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -15,6 +12,8 @@ public class SpawnHandler {
 	public static void worldTick(WorldTickEvent event){
 		// The world time ticks up indefinitely so we mod it to get the time within a day
 		worldTime = Math.floorMod(event.world.getWorldTime(),24000);
+		// I want my code to run as little as possible for speed.  Since this runs before I check the phase it runs twice per tick
+		// so it should run the code once every 5 seconds
 		if(Math.floorMod(worldTime, 100)!=0){
 			return;
 		}
@@ -34,10 +33,8 @@ public class SpawnHandler {
 			switch(event.world.provider.getDimension()){
 			case 0:
 				// We're ticking the overworld dimension!
-				// using a bed sticks you at a multiple of 24000
-				if(Math.floorMod(worldTime, 10)==0){
-					Logger.getLogger("EMVI").log(Level.INFO,String.format("TESTING %d", worldTime));
-				}
+				// Logger.getLogger("EMVI").log(Level.INFO,String.format("WorldTime: %d", worldTime));
+				// event.world.playerEntities.parallelStream().forEach((a)->Logger.getLogger("EMVI").log(Level.INFO,String.format("Player in world: %s", a.getDisplayNameString())));
 				break;
 			default:
 				break;
