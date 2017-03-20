@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 
 @Mod(modid=Ref.MODID, name=Ref.NAME, version=Ref.VERSION)
 public class EmergentVillages {
@@ -28,4 +29,11 @@ public class EmergentVillages {
 	public void postInit(FMLPostInitializationEvent event){
 		proxy.postInit();
 	}
+	
+	@EventHandler
+	public void serverStarted(FMLServerStartedEvent event)
+	{
+	    proxy.serverStarted();
+	}
+
 }

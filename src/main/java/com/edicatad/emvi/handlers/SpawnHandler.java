@@ -1,5 +1,9 @@
 package com.edicatad.emvi.handlers;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -30,10 +34,11 @@ public class SpawnHandler {
 			 * maintain the limit in the world save file
 			 */
 			// this is a switch in case I want to provide mod support to other mods or add villagers to the nether or something
+			// this does nothing because the world ticks globally;  I need to grab it from the players maybe?  idk.
 			switch(event.world.provider.getDimension()){
 			case 0:
 				// We're ticking the overworld dimension!
-				// Logger.getLogger("EMVI").log(Level.INFO,String.format("WorldTime: %d", worldTime));
+				LogManager.getLogger().log(Level.INFO,String.format("EmVi tick at WorldTime: %d in dimension %d", worldTime, event.world.provider.getDimension()));
 				// event.world.playerEntities.parallelStream().forEach((a)->Logger.getLogger("EMVI").log(Level.INFO,String.format("Player in world: %s", a.getDisplayNameString())));
 				break;
 			default:
@@ -43,5 +48,10 @@ public class SpawnHandler {
 		default:
 			break;
 		}
+	}
+	
+	@SubscribeEvent
+	public static void entitySpawned(EntityJoinWorldEvent event){
+		LogManager.getLogger().log(Level.INFO, String.format("Entity spawned: %s",event.getEntity().getDisplayName()));
 	}
 }
