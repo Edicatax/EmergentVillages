@@ -13,13 +13,15 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 public class SpawnHandler {
 	private static long worldTime;
 	
+	private static final String tagName = "EmVi";
+	
 	@SubscribeEvent
 	public static void worldTick(WorldTickEvent event){
 		// The world time ticks up indefinitely so we mod it to get the time within a day
 		worldTime = Math.floorMod(event.world.getWorldTime(),24000);
 		// I want my code to run as little as possible for speed.  Since this runs before I check the phase it runs twice per tick
 		// so it should run the code once every 5 seconds
-		if(Math.floorMod(worldTime, 100)!=0){
+		if(Math.floorMod(worldTime, 100) != 0){
 			return;
 		}
 		
@@ -53,9 +55,11 @@ public class SpawnHandler {
 	
 	@SubscribeEvent
 	public static void entitySpawned(EntityJoinWorldEvent event){
-		if(event.getEntity().getName().contains("Villager")){
+		if(event.getEntity().getName().contains("Villager") && !event.getWorld().isRemote && !event.getEntity().getEntityData().getBoolean(tagName)){
 			// have to use the MathHelper workaround because chunkX and chunkZ are 0 on spawn
 			LogManager.getLogger().log(Level.INFO, "Entity spawned at chunk coords: x " + MathHelper.floor(event.getEntity().posX / 16.0D) + ", z " + MathHelper.floor(event.getEntity().posZ / 16.0D));
+			// set this to true to inform future calls of this code that this villager has been handled.
+			event.getEntity().getEntityData().setBoolean(tagName, true);
 		}
 	}
 }
