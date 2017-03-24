@@ -19,7 +19,7 @@ public class VillagerData extends WorldSavedData{
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
     	compound.setTag("EmVi", data);
-    	return data;
+    	return compound;
     }
     
     public NBTTagCompound getData() {
