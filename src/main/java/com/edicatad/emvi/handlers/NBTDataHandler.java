@@ -1,5 +1,7 @@
 package com.edicatad.emvi.handlers;
 
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -8,35 +10,64 @@ import com.edicatad.emvi.world.storage.VillagerData;
 import net.minecraft.world.World;
 
 public class NBTDataHandler {
-	private static VillagerData villagerData;
+	// should this be an array of VillagerDatas to support extra dimensions?  Yes it should
+	// arraylist?
+	private static ArrayList<VillagerData> villagerData = new ArrayList<VillagerData>();
 	
 	private static final String tagName = "EmVi";
 	
 	public static void init(World world){
-		if(villagerData == null){
-			villagerData = (VillagerData) world.getPerWorldStorage().getOrLoadData(VillagerData.class, tagName);
-			
-			if(villagerData == null){
-				villagerData = new VillagerData(tagName);
-				world.getPerWorldStorage().setData(tagName, villagerData);
-			}
+		// We want to grab the dimension to support multiple dimensions
+		int dimensionID = world.provider.getDimension();
+		//if(villagerData.size() != 0){
+			for(VillagerData data : villagerData){
+				if(data.getDimensionID() == dimensionID){
+					// if I already have a VillagerData for this dimension I don't need to do anything
+					return;
+				}
+			} // for
+		//}
+		
+		villagerData.add((VillagerData) world.getPerWorldStorage().getOrLoadData(VillagerData.class, tagName));
+		// size() - 1 is the index of the last added element.  If no data is loaded we need to initialize it.
+		if(villagerData.get(villagerData.size() - 1) == null){
+			villagerData.set(villagerData.size() - 1, new VillagerData(tagName));
+			villagerData.get(villagerData.size() - 1).setDimensionID(dimensionID);
+			world.getPerWorldStorage().setData(tagName, villagerData.get(villagerData.size() - 1));
 		}
 	}
 	
-	public static int getVillagersSpawnedForChunk(int chunkX, int chunkZ){
+	/**
+     * Gets the amount of villagers spawned in a given chunk.  Returns -1 if no data is present.
+     */
+	public static int getVillagersSpawnedForChunk(int dimensionID, int chunkX, int chunkZ){
 		// this returns 0 if no villagers have spawned or if there is no data stored - functionally the same
-		return villagerData.getData().getInteger(String.format("x%iz%i", chunkX, chunkZ));
+		for(VillagerData data : villagerData){
+			if(data.getDimensionID() == dimensionID){
+				// We can get away with only passing the chunk coordinates because every dimension has its own dataset
+				return data.getData().getInteger(String.format("x%iz%i", chunkX, chunkZ));
+			}
+		} // for
+		return -1;
 	}
 	
-	public static void incrementVillagersSpawnedForChunk(int chunkX, int chunkZ){
-		villagerData.getData().setInteger(String.format("x%iz%i", chunkX, chunkZ), getVillagersSpawnedForChunk(chunkX, chunkZ) + 1);
+	public static void incrementVillagersSpawnedForChunk(int dimensionID, int chunkX, int chunkZ){
+		for(VillagerData data : villagerData){
+			if(data.getDimensionID() == dimensionID){
+				data.getData().setInteger(String.format("x%iz%i", chunkX, chunkZ), getVillagersSpawnedForChunk(dimensionID, chunkX, chunkZ) + 1);
+			}
+		} // for
 	}
 	
-	public static void decrementVillagersSpawnedForChunk(int chunkX, int chunkZ){
-		if(getVillagersSpawnedForChunk(chunkX, chunkZ) > 0){
-			villagerData.getData().setInteger(String.format("x%iz%i", chunkX, chunkZ), getVillagersSpawnedForChunk(chunkX, chunkZ) - 1);
-		} else {
-			LogManager.getLogger().log(Level.WARN, String.format("Tried to decrement villager spawn count for chunk at x%iz%i below 0", chunkX, chunkZ));
-		}
+	public static void decrementVillagersSpawnedForChunk(int dimensionID, int chunkX, int chunkZ){
+		for(VillagerData data : villagerData){
+			if(data.getDimensionID() == dimensionID){
+				if(getVillagersSpawnedForChunk(dimensionID, chunkX, chunkZ) > 0){
+					data.getData().setInteger(String.format("x%iz%i", chunkX, chunkZ), getVillagersSpawnedForChunk(dimensionID, chunkX, chunkZ) - 1);
+				} else {
+					LogManager.getLogger().log(Level.WARN, String.format("Tried to decrement villager spawn count for dim %d chunk at x%iz%i below 0", dimensionID, chunkX, chunkZ));
+				}
+			}
+		} // for
 	}
 }

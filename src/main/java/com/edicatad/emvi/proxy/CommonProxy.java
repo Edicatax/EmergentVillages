@@ -5,8 +5,8 @@ import org.apache.logging.log4j.LogManager;
 
 import com.edicatad.emvi.handlers.NBTDataHandler;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommonProxy implements IProxy{
 	// This code runs server-side
@@ -34,8 +34,9 @@ public class CommonProxy implements IProxy{
 	public void serverStarted()
 	{
 		LogManager.getLogger().log(Level.WARN, "Server started!");
-		for(WorldServer srv : MinecraftServer.worlds){
-			NBTDataHandler.init(MinecraftServer.getServer().worlds);
+		// Every dimension should have a VillagerData attached
+		for(WorldServer srv : DimensionManager.getWorlds()){
+			NBTDataHandler.init(srv);
 		}
 	}
 }

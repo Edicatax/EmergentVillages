@@ -5,6 +5,7 @@ import net.minecraft.world.WorldSavedData;
 
 public class VillagerData extends WorldSavedData{
 	private NBTTagCompound data = new NBTTagCompound();
+	private int dimension;
 	
 	public VillagerData(String tagName){
 		super(tagName);
@@ -23,5 +24,13 @@ public class VillagerData extends WorldSavedData{
     
     public NBTTagCompound getData() {
     	return data;
+    }
+    
+    public void setDimensionID(int dimensionID){
+    	dimension = dimensionID;
+    }
+    
+    public int getDimensionID(){
+    	return dimension;
     }
 }
