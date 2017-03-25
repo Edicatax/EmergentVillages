@@ -14,6 +14,10 @@ public class NBTDataHandler {
 	
 	private static final String tagName = "EmVi";
 	
+	/**
+	 * Grabs the stored VillagerData for the dimension, or creates it if there is none. <br>
+	 * @param world
+	 */
 	public static void init(World world){
 		LogManager.getLogger().log(Level.INFO, "Creating VillagerData for dimension " + world.provider.getDimension());
 		// We want to grab the dimension to support multiple dimensions

@@ -12,17 +12,18 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 public class TickHandler {
 	private static long worldTime;
 	/* Minecraft runs 10 ticks per second, so 100 ticks is ten seconds. */
-	private static final int tickSpeed = 500;
-	
+	private static final int tickSpeed = 600;
+	// This should be a different value for each dimension
 	private static int playerToTick;
 	
 	/**
-	 * This sets the next player to tick when Emergent Villager ticks. <br>
+	 * This sets the next player to tick when Emergent Villager ticks.  If index is less than 0, playerToTick will be set to 0.<br>
 	 * <br>
 	 * This has no return value.
 	 **/
 	public static void setPlayerToTick(int index){
 		playerToTick = index;
+		if(playerToTick < 0){ playerToTick = 0; }
 	}
 	
 	@SubscribeEvent
@@ -38,6 +39,7 @@ public class TickHandler {
 		
 		/*
 		 * TODO 
+		 * Load stuff like tickSpeed from a config file
 		 * spawn villagers based on random chance
 		 * limit villagers spawned on a per-chunk basis
 		 */
@@ -49,21 +51,10 @@ public class TickHandler {
 			NBTDataHandler.printNBTTagContentsForDimension(event.world.provider.getDimension());
 			if(event.world.playerEntities.size() > 0 && playerToTick < event.world.playerEntities.size()){
 				LogManager.getLogger().log(Level.INFO, "Doing tick event for player at index " + playerToTick + ": " + event.world.playerEntities.get(playerToTick).getName());
-				
+				SpawnHandler.attemptSpawnNearPlayer(event.world.playerEntities.get(playerToTick), event.world);
 				if(event.world.playerEntities.size() - 1 > playerToTick){ playerToTick++; }
 				else 													{ playerToTick = 0; }
 			}
-			
-			/// Spawn code from spawn egg:
-			/*
-			int x = 
-			EntityLiving entityliving = (EntityLiving)entity;
-            entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(worldIn.rand.nextFloat() * 360.0F), 0.0F);
-            entityliving.rotationYawHead = entityliving.rotationYaw;
-            entityliving.renderYawOffset = entityliving.rotationYaw;
-            entityliving.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityliving)), (IEntityLivingData)null);
-            worldIn.spawnEntity(entity);
-            entityliving.playLivingSound();*/
 			break;
 		default:
 			break;
