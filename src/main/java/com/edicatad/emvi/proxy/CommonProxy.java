@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import com.edicatad.emvi.handlers.NBTDataHandler;
+import com.edicatad.emvi.handlers.SpawnHandler;
 
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -38,5 +39,7 @@ public class CommonProxy implements IProxy{
 		for(WorldServer srv : DimensionManager.getWorlds()){
 			NBTDataHandler.init(srv);
 		}
+		// Start ticking at player 0 after starting the server, so it works if there is only one player too.
+		SpawnHandler.setPlayerToTick(0);
 	}
 }
