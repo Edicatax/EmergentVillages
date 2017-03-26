@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 public class TickHandler {
 	private static long worldTime;
 	/* Minecraft runs 10 ticks per second, so 100 ticks is ten seconds. */
-	private static final int tickSpeed = 600;
+	private static final int tickSpeed = 50;
 	// This should be a different value for each dimension
 	private static int playerToTick;
 	
@@ -47,10 +47,9 @@ public class TickHandler {
 		switch(event.world.provider.getDimension()){
 		case 0:
 			// We're ticking the overworld dimension!
-			// event.world.playerEntities.parallelStream().forEach((a)->Logger.getLogger("EMVI").log(Level.INFO,String.format("Player in world: %s", a.getDisplayNameString())));
 			NBTDataHandler.printNBTTagContentsForDimension(event.world.provider.getDimension());
 			if(event.world.playerEntities.size() > 0 && playerToTick < event.world.playerEntities.size()){
-				LogManager.getLogger().log(Level.INFO, "Doing tick event for player at index " + playerToTick + ": " + event.world.playerEntities.get(playerToTick).getName());
+				LogManager.getLogger().log(Level.INFO, "Attempting spawn for player at index " + playerToTick + ": " + event.world.playerEntities.get(playerToTick).getName());
 				SpawnHandler.attemptSpawnNearPlayer(event.world.playerEntities.get(playerToTick), event.world);
 				if(event.world.playerEntities.size() - 1 > playerToTick){ playerToTick++; }
 				else 													{ playerToTick = 0; }
