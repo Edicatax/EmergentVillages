@@ -34,12 +34,12 @@ public class CommonProxy implements IProxy{
 	@Override
 	public void serverStarted()
 	{
-		LogManager.getLogger().log(Level.WARN, "Server started!");
+		LogManager.getLogger().log(Level.INFO, "Hooking in Emergent Villagers' spawn logic");
 		// Every dimension should have a VillagerData attached
 		for(WorldServer srv : DimensionManager.getWorlds()){
 			NBTDataHandler.init(srv);
+			TickHandler.init(srv);
 		}
-		// Start ticking at player 0 after starting the server, so it works if there is only one player too.
-		TickHandler.setPlayerToTick(0);
+		TickHandler.findNextWorldToTick();
 	}
 }
