@@ -3,32 +3,30 @@ package com.edicatad.emvi.proxy;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
+import com.edicatad.emvi.handlers.ConfigHandler;
 import com.edicatad.emvi.handlers.NBTDataHandler;
 import com.edicatad.emvi.handlers.TickHandler;
 
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class CommonProxy implements IProxy{
 	// This code runs server-side
 	// Remember that Minecraft singleplayer loads a local server in the background
 	@Override
-	public void preInit() {
-		// TODO Auto-generated method stub
-		LogManager.getLogger().log(Level.WARN, "preInit");
+	public void preInit(FMLPreInitializationEvent event) {
+		// Load config stuff
+		ConfigHandler.handleConfig(new Configuration(event.getSuggestedConfigurationFile()));
 	}
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-		LogManager.getLogger().log(Level.WARN, "Init");
-		
 	}
 
 	@Override
 	public void postInit() {
-		// TODO Auto-generated method stub
-		LogManager.getLogger().log(Level.WARN, "postInit");
 	}
 	
 	@Override
