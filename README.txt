@@ -15,3 +15,5 @@ TODO
 Notify the player if a villager has spawned close to them
 Get data (spawn radius, max villagers per chunk, dimensions to spawn villagers in) from a config file
 
+KNOWN ISSUES
+Because I use clamped regional difficulty, no villagers ever spawn on Peaceful difficulty, while villagers can start spawning from the first creation of a world on Hard difficulty
