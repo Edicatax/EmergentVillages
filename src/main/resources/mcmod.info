@@ -1,16 +1,21 @@
-[
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+  "modListVersion": 2,
+  "modList": [{
+    "modid": "emvi",
+    "name": "Emergent Villages",
+    "description": "This mod makes villages dynamically appear as you spend more time in an area - the world revolves around you, of course.",
+    "version": "1.0",
+    "mcversion": "1.11.2",
+    "url": "https://github.com/Edicatad/EmergentVillages",
+    "updateUrl": "",
+    "authorList": [ "Edicatad" ],
+    "credits": "Authored by Edicatad",
+    "logoFile": "",
+    "screenshots": [ ],
+    "parent": "",
+    "requiredMods": [ ],
+    "dependencies": [ ],
+    "dependants": [ ],
+    "useDependencyInformation": true
+  }]
 }
-]
