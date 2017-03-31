@@ -40,13 +40,21 @@ public class TickHandler {
 	private static long worldTime;
 	// TODO Load stuff like tickSpeed from a config file
 	/* Minecraft runs 10 ticks per second, so 100 ticks is ten seconds. */
-	private static final int tickSpeed = 50;
+	private static int tickSpeed = 600;
 	private static ArrayList<TickTracker> tickList = new ArrayList<TickTracker>();
 	private static int nextWorldToTick = 0;
 	private static long lastTickProcessed = 0;
 	
 	public static void init(World world){
 		tickList.add(new TickTracker(world.provider.getDimension(),0));
+	}
+	
+	/**
+	 * Initializes default values.  This is called by ConfigHandler.
+	 * @param tickTime
+	 */
+	public static void initConfig(int tickTime){
+		tickSpeed = tickTime;
 	}
 	
 	/**

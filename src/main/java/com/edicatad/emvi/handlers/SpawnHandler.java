@@ -20,9 +20,19 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class SpawnHandler {
 	private static final String tagName = "EmVi";
 	
-	private static final int chunkCheckRange = 2;
+	private static int chunkCheckRange = 2;
 	
-	private static final int maxVillagersPerChunk = 1;
+	private static int maxVillagersPerChunk = 1;
+	
+	/**
+	 * Initializes default values.  This is called by ConfigHandler.
+	 * @param checkRange
+	 * @param villagersPerChunk
+	 */
+	public static void initConfig(int checkRange, int villagersPerChunk){
+		chunkCheckRange = checkRange;
+		maxVillagersPerChunk = villagersPerChunk;
+	}
 	
 	/**
 	 * Attempts to spawn a villager near the specified player.  It looks at a random chunk within 2 chunks of the player and then spawns a villager if a random value exceeds the local difficulty
