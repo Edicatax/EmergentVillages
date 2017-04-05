@@ -38,7 +38,7 @@ class TickTracker {
 @Mod.EventBusSubscriber
 public class TickHandler {
 	private static long worldTime;
-	// TODO Load stuff like tickSpeed from a config file
+	// TODO Load a list of dimensions to check from a config file
 	/* Minecraft runs 10 ticks per second, so 100 ticks is ten seconds. */
 	private static int tickSpeed = 600;
 	private static ArrayList<TickTracker> tickList = new ArrayList<TickTracker>();

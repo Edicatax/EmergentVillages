@@ -9,7 +9,6 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEntitySpawner;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -19,19 +18,22 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class SpawnHandler {
 	private static final String tagName = "EmVi";
-	
 	private static int chunkCheckRange = 2;
-	
+	private static double maxChunkInhabitedTime = 3600000.0d;
 	private static int maxVillagersPerChunk = 1;
+	private static boolean loggingEnabled = false;
 	
 	/**
 	 * Initializes default values.  This is called by ConfigHandler.
 	 * @param checkRange
 	 * @param villagersPerChunk
 	 */
-	public static void initConfig(int checkRange, int villagersPerChunk){
+	public static void initConfig(int checkRange, int villagersPerChunk, double maxInhabitedTime, boolean isLoggingEnabled){
 		chunkCheckRange = checkRange;
 		maxVillagersPerChunk = villagersPerChunk;
+		maxChunkInhabitedTime = maxInhabitedTime;
+		loggingEnabled = isLoggingEnabled;
+		LogManager.getLogger().log(Level.INFO, "Clamp 600000 / 3600000.0F: " + MathHelper.clamp(600000.0d / maxChunkInhabitedTime, 0.0d, 1.0d));
 	}
 	
 	/**
@@ -44,13 +46,14 @@ public class SpawnHandler {
 		int chunkX = MathHelper.floor( player.posX / 16.0D ) + ( (int) Math.round( Math.random() * ( 2 * chunkCheckRange ) ) - chunkCheckRange );
 		int chunkZ = MathHelper.floor( player.posZ / 16.0D ) + ( (int) Math.round( Math.random() * ( 2 * chunkCheckRange ) ) - chunkCheckRange );
 		if(NBTDataHandler.getVillagersSpawnedForChunk(world.provider.getDimension(), chunkX, chunkZ) >= maxVillagersPerChunk){
-			LogManager.getLogger().log(Level.WARN, "Tried to spawn a Villager in chunk x" + chunkX + "z" + chunkZ + " but the " + 
+			if(loggingEnabled){
+				LogManager.getLogger().log(Level.WARN, "Tried to spawn a Villager in chunk x" + chunkX + "z" + chunkZ + " but the " + 
 													"maximum amount of villagers for that chunk has already been spawned.");
+			}
 			return;
 		}
-		// getClampedAdditionalDifficulty returns a value between 0 and 1 based on the time spent in the chunk.  I could use getDifficultyForLocation here but I'd have to convert
-		// chunk coordinates to world coordinates and I don't want to do unnecessary calculations.
-		float clampedChunkDifficulty = new DifficultyInstance(world.getDifficulty(), world.getWorldTime(), world.getChunkFromChunkCoords(chunkX, chunkZ).getInhabitedTime(), world.getMoonPhase()).getClampedAdditionalDifficulty();
+		double clampedChunkDifficulty = MathHelper.clamp(world.getChunkFromChunkCoords(chunkX, chunkZ).getInhabitedTime() / maxChunkInhabitedTime, 0.0d, 1.0d);
+		// float clampedChunkDifficulty = new DifficultyInstance(world.getDifficulty(), world.getWorldTime(), world.getChunkFromChunkCoords(chunkX, chunkZ).getInhabitedTime(), world.getMoonPhase()).getClampedAdditionalDifficulty();
 		if(Math.random() < clampedChunkDifficulty){
 			int lowerBoundX = chunkX * 16;
 			int lowerBoundZ = chunkZ * 16;
@@ -68,7 +71,9 @@ public class SpawnHandler {
                 if (WorldEntitySpawner.canCreatureTypeSpawnAtLocation(EntityLiving.SpawnPlacementType.ON_GROUND, world, blockpos)){
                     EntityVillager entityVillager;
 
-        			LogManager.getLogger().log(Level.WARN, "Trying to spawn a villager: x = " + worldZ + ", z = " + worldX);
+        			if(loggingEnabled){
+        				LogManager.getLogger().log(Level.WARN, "Trying to spawn a villager: x = " + worldZ + ", z = " + worldX);
+        			}
                     try{
         				entityVillager = new EntityVillager(world);
                     }
