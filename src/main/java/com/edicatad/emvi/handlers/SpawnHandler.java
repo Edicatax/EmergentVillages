@@ -33,7 +33,6 @@ public class SpawnHandler {
 		maxVillagersPerChunk = villagersPerChunk;
 		maxChunkInhabitedTime = maxInhabitedTime;
 		loggingEnabled = isLoggingEnabled;
-		LogManager.getLogger().log(Level.INFO, "Clamp 600000 / 3600000.0F: " + MathHelper.clamp(600000.0d / maxChunkInhabitedTime, 0.0d, 1.0d));
 	}
 	
 	/**
@@ -106,6 +105,9 @@ public class SpawnHandler {
 				&& !event.getEntity().getName().contains("Zombie")
 				&& !event.getWorld().isRemote 
 				&& !event.getEntity().getEntityData().getBoolean(tagName)){
+			if(loggingEnabled){
+				LogManager.getLogger().log(Level.INFO, "A villager spawned at x" + event.getEntity().posX + "z" + event.getEntity().posZ + " and has been added to the data list.");
+			}
 			// set this to true to inform future calls of this code that this villager has been handled.
 			event.getEntity().getEntityData().setBoolean(tagName, true);
 			// have to use the MathHelper workaround because chunkX and chunkZ are 0 on spawn
