@@ -37,11 +37,11 @@ class TickTracker {
 
 @Mod.EventBusSubscriber
 public class TickHandler {
-	private static long worldTime;
 	// TODO Load a list of dimensions to check from a config file
 	/* Minecraft runs 10 ticks per second, so 100 ticks is ten seconds. */
 	private static int tickSpeed = 600;
 	private static ArrayList<TickTracker> tickList = new ArrayList<TickTracker>();
+	private static ArrayList<Integer> dimensionsToTick = new ArrayList<Integer>();
 	private static int nextWorldToTick = 0;
 	private static long lastTickProcessed = 0;
 	
@@ -56,7 +56,8 @@ public class TickHandler {
 	public static void initConfig(int tickTime, String[] dimensionList){
 		tickSpeed = tickTime;
 		for(String s:dimensionList){
-			LogManager.getLogger().log(Level.INFO, s);
+			if(ConfigHandler.LOGGING)LogManager.getLogger().log(Level.INFO, "Dimension added to tick list: " + s);
+			dimensionsToTick.add(Integer.parseInt(s));
 		}
 	}
 	
@@ -95,9 +96,7 @@ public class TickHandler {
 		if(event.world.isRemote){return;}
 		// If I don't have this code everything runs twice per tick, and we can use it to mark the tick as completed
 		if(event.phase == Phase.END){return;}
-		// The world time ticks up indefinitely so we mod it to get the time within a day
-		worldTime = Math.floorMod(event.world.getWorldTime(),24000);
-		if(Math.floorMod(worldTime, tickSpeed) != 0){return;}
+		if(Math.floorMod(event.world.getTotalWorldTime(), tickSpeed) != 0){return;}
 		TickTracker tickTracker = getTickTrackerForDimension(event.world.provider.getDimension());
 		if(!tickTracker.trackedWorldHasPlayers()){
 			if(tickTracker.worldToTick == nextWorldToTick){
@@ -109,6 +108,9 @@ public class TickHandler {
 		if(!tickTracker.hasTicked && tickTracker.worldToTick == nextWorldToTick && event.world.getTotalWorldTime() > lastTickProcessed){
 			// TODO dynamically go through this switch based on config somewhere
 			// this is a switch in case I want to provide mod support to other mods or add villagers to the nether or something
+			if(dimensionsToTick.contains(tickTracker.worldToTick)){
+				if(ConfigHandler.LOGGING)LogManager.getLogger().log(Level.INFO, "We're ticking in this dimension: " + tickTracker.worldToTick);
+			}
 			switch(tickTracker.worldToTick){
 			case 0:
 				if(tickTracker.trackedWorldHasPlayers() && tickTracker.playerToTick < event.world.playerEntities.size()){
@@ -126,7 +128,7 @@ public class TickHandler {
 		}
 		// if we get to this point, a world has probably unloaded and eaten our tick tracker, so find a new world to tick on
 		if(DimensionManager.getWorld(nextWorldToTick) == null){
-			LogManager.getLogger().log(Level.WARN, "Tracker lost, generating new tracker.");
+			if(ConfigHandler.LOGGING)LogManager.getLogger().log(Level.WARN, "Tracker lost, generating new tracker.");
 			findNextWorldToTick();
 		}
 	}

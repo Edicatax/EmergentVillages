@@ -21,18 +21,16 @@ public class SpawnHandler {
 	private static int chunkCheckRange = 2;
 	private static double maxChunkInhabitedTime = 3600000.0d;
 	private static int maxVillagersPerChunk = 1;
-	private static boolean loggingEnabled = false;
 	
 	/**
 	 * Initializes default values.  This is called by ConfigHandler.
 	 * @param checkRange
 	 * @param villagersPerChunk
 	 */
-	public static void initConfig(int checkRange, int villagersPerChunk, double maxInhabitedTime, boolean isLoggingEnabled){
+	public static void initConfig(int checkRange, int villagersPerChunk, double maxInhabitedTime){
 		chunkCheckRange = checkRange;
 		maxVillagersPerChunk = villagersPerChunk;
 		maxChunkInhabitedTime = maxInhabitedTime;
-		loggingEnabled = isLoggingEnabled;
 	}
 	
 	/**
@@ -45,7 +43,7 @@ public class SpawnHandler {
 		int chunkX = MathHelper.floor( player.posX / 16.0D ) + ( (int) Math.round( Math.random() * ( 2 * chunkCheckRange ) ) - chunkCheckRange );
 		int chunkZ = MathHelper.floor( player.posZ / 16.0D ) + ( (int) Math.round( Math.random() * ( 2 * chunkCheckRange ) ) - chunkCheckRange );
 		if(NBTDataHandler.getVillagersSpawnedForChunk(world.provider.getDimension(), chunkX, chunkZ) >= maxVillagersPerChunk){
-			if(loggingEnabled){
+			if(ConfigHandler.LOGGING){
 				LogManager.getLogger().log(Level.WARN, "Tried to spawn a Villager in chunk x" + chunkX + "z" + chunkZ + " but the " + 
 													"maximum amount of villagers for that chunk has already been spawned.");
 			}
@@ -70,7 +68,7 @@ public class SpawnHandler {
                 if (WorldEntitySpawner.canCreatureTypeSpawnAtLocation(EntityLiving.SpawnPlacementType.ON_GROUND, world, blockpos)){
                     EntityVillager entityVillager;
 
-        			if(loggingEnabled){
+        			if(ConfigHandler.LOGGING){
         				LogManager.getLogger().log(Level.WARN, "Trying to spawn a villager: x = " + worldZ + ", z = " + worldX);
         			}
                     try{
@@ -104,7 +102,7 @@ public class SpawnHandler {
 		if(event.getWorld().isRemote)return;
 		if(EntityVillager.class.isInstance(event.getEntity())
 				&& !event.getEntity().getEntityData().getBoolean(tagName)){
-			if(loggingEnabled){
+			if(ConfigHandler.LOGGING){
 				LogManager.getLogger().log(Level.INFO, "A villager spawned at x" + event.getEntity().posX + "z" + event.getEntity().posZ + " and has been added to the data list.");
 			}
 			// set this to true to inform future calls of this code that this villager has been handled.
