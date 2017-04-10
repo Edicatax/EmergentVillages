@@ -53,8 +53,11 @@ public class TickHandler {
 	 * Initializes default values.  This is called by ConfigHandler.
 	 * @param tickTime
 	 */
-	public static void initConfig(int tickTime){
+	public static void initConfig(int tickTime, String[] dimensionList){
 		tickSpeed = tickTime;
+		for(String s:dimensionList){
+			LogManager.getLogger().log(Level.INFO, s);
+		}
 	}
 	
 	/**

@@ -101,9 +101,8 @@ public class SpawnHandler {
 	@SubscribeEvent
 	public static void entitySpawned(EntityJoinWorldEvent event){
 		// This only runs server side
-		if(event.getEntity().getName().contains("Villager")
-				&& !event.getEntity().getName().contains("Zombie")
-				&& !event.getWorld().isRemote 
+		if(event.getWorld().isRemote)return;
+		if(EntityVillager.class.isInstance(event.getEntity())
 				&& !event.getEntity().getEntityData().getBoolean(tagName)){
 			if(loggingEnabled){
 				LogManager.getLogger().log(Level.INFO, "A villager spawned at x" + event.getEntity().posX + "z" + event.getEntity().posZ + " and has been added to the data list.");

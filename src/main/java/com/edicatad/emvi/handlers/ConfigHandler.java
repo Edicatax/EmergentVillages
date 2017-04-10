@@ -22,11 +22,15 @@ public class ConfigHandler {
 		current = config.get(Configuration.CATEGORY_GENERAL, "Max villagers per chunk", 1);
 		current.setComment("This is the maximum amount of villagers that Emergent Villages spawns per chunk.  Default 1.");
 		SpawnHandler.initConfig(chunkRange, current.getInt(), maxSpawnTime, logging);
+		String[] dimensionArray = {"0"};
+		current = config.get(Configuration.CATEGORY_GENERAL , "Dimensions", dimensionArray);
+		current.setComment("These are the dimensions that Emergent Villages will spawn villagers in.  Default 0 (Overworld).");
+		dimensionArray = current.getStringList();
 		current = config.get(Configuration.CATEGORY_GENERAL, "Tick speed", 600);
 		current.setComment("This is the amount of time that Emergent Villages waits between checks.  Minecraft ticks 10 times per second.  Higher numbers means that even if "
 				+ "the regional difficulty is high it will take a while to spawn villagers, but the impact on the server will be low.  Lower numbers means villagers spawn "
 				+ "faster, up to the limit, but there will be a performance hit.  Default 600.");
-		TickHandler.initConfig(current.getInt());
+		TickHandler.initConfig(current.getInt(), dimensionArray);
 		config.save();
 	}
 }
