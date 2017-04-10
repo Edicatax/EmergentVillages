@@ -38,7 +38,7 @@ class TickTracker {
 @Mod.EventBusSubscriber
 public class TickHandler {
 	// TODO Load a list of dimensions to check from a config file
-	/* Minecraft runs 10 ticks per second, so 100 ticks is ten seconds. */
+	/* Minecraft runs 20 ticks per second, so 200 ticks is ten seconds. */
 	private static int tickSpeed = 600;
 	private static ArrayList<TickTracker> tickList = new ArrayList<TickTracker>();
 	private static ArrayList<Integer> dimensionsToTick = new ArrayList<Integer>();
@@ -94,7 +94,7 @@ public class TickHandler {
 	public static void worldTick(WorldTickEvent event){
 		// I only want to tick on the server
 		if(event.world.isRemote){return;}
-		// If I don't have this code everything runs twice per tick, and we can use it to mark the tick as completed
+		// If I don't have this code everything runs twice per tick
 		if(event.phase == Phase.END){return;}
 		if(Math.floorMod(event.world.getTotalWorldTime(), tickSpeed) != 0){return;}
 		TickTracker tickTracker = getTickTrackerForDimension(event.world.provider.getDimension());
@@ -106,20 +106,12 @@ public class TickHandler {
 			return;
 		}
 		if(!tickTracker.hasTicked && tickTracker.worldToTick == nextWorldToTick && event.world.getTotalWorldTime() > lastTickProcessed){
-			// TODO dynamically go through this switch based on config somewhere
-			// this is a switch in case I want to provide mod support to other mods or add villagers to the nether or something
 			if(dimensionsToTick.contains(tickTracker.worldToTick)){
 				if(ConfigHandler.LOGGING)LogManager.getLogger().log(Level.INFO, "We're ticking in this dimension: " + tickTracker.worldToTick);
-			}
-			switch(tickTracker.worldToTick){
-			case 0:
 				if(tickTracker.trackedWorldHasPlayers() && tickTracker.playerToTick < event.world.playerEntities.size()){
 					SpawnHandler.attemptSpawnNearPlayer(event.world.playerEntities.get(tickTracker.playerToTick), event.world);
 					tickTracker.setNextPlayerToTick(event.world);
 				}
-				break;
-			default:
-				break;
 			}
 			tickTracker.hasTicked = true;
 			findNextWorldToTick();
